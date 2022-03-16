@@ -78,9 +78,9 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
   const { id } = request.params;
   const { title, deadline } = request.body;
   
-  const index = user.todos.findIndex((todo) => todo.id === id);
+  const todo = user.todos.find((todo) => todo.id === id);
 
-  if (index === -1) {
+  if (!todo) {
     return response.status(404).json({ error: "Todo not found"});
   }
 
@@ -88,20 +88,10 @@ app.put('/todos/:id', checksExistsUserAccount, (request, response) => {
     return response.status(400).json({ error: "Title or deadline cannot be empty"});
   }
 
-  const updateTodo = {
-    ...user.todos[index],
-    title,
-    deadline,
-    done: false
-  };
+  todo.title = title;
+  todo.deadline = new Date(deadline);
 
-  user.todos[index] = updateTodo;
-
-  return response.json({
-    title,
-    deadline,
-    done: false,
-  });
+  return response.json(todo);
 
 });
 
